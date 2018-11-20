@@ -1,8 +1,7 @@
 ---
 title: "Bootstrap"
 author:
-- affiliation: Rutgers University
-  name: Jiapeng Zhang
+
 output:
   pdf_document: default
   html_notebook: default
