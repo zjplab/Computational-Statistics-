@@ -1,0 +1,98 @@
+---
+title: "Posterior"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+# For Possion likelihood function 
+If the $X_1, X_2, ..., X_n$ is a random sample from a Poissson distribution with an unknown value of the mean $W$. Suppose the prior distribution of $W$ is a gamma distribution with parametes $\alpha$(shape) and$\beta$ (rate). Then the posterior distribution of$W$ is a gamma distribution with parameters$\alpha + \sum_{i=1}^n X_i$  and $\beta+n$.
+
+```{r}
+n=50
+x0<-rpois(n, lambda = 2)
+pois_conju<-function(vec, alpha, beta){
+ len=length(vec)
+ new_alpha=alpha+sum(vec)
+ new_beta=beta+len
+ cat("Original: Gamma distribution with  shape alpha=%f,  rate beta=%f\n", alpha, beta)
+ cat("Now : Gamma distribution with shape alpha'=%f , rate beta'=%f", new_alpha, new_beta)
+ x<-x <- seq(-10, 10, length=10000)
+ plot(x, dgamma(x, shape = new_alpha, rate = new_beta))
+}
+pois_conju(x0, alpha=2, beta=15)
+```
+
+
+# For Binomial likelihood function 
+If the $X_1, X_2, ..., X_n$ is a random sample from a Binomial distribution $B(N, \theta)$, and prior distribution for $\theta$ is beta distribution with parameters$\alpha$ and $\beta$ . The posterior shoule be Beta distribution with parameters $\alpha+ \sum_{i=1}^n X_i$ and $\beta + nN -\sum_{i=1}^n X_i$
+```{r}
+n1=50
+x1<-rbinom(n=n1, size=7, prob=0.7)
+binom_conju<-function(vec, alpha, beta, size){
+ len=length(vec)
+ new_alpha=alpha+sum(vec)
+ new_beta=beta+len*size-sum(vec)
+ x<-x <- seq(-10, 10, length=10000)
+ plot(x, dbeta(x, shape1 = new_alpha, shape2 = new_beta, log = TRUE) )
+}
+binom_conju(x1, alpha=4.2, beta=.5, size=7)
+```
+
+
+
+# For Normal likelihood function 
+If the $X_1, X_2, ..., X_n$ is a random sample from a Normal distribution with unknown mean $W$ and a known precision $r$. Suppose the prior of $W$ is a normal distribution with mean $\mu$ and precision $\tau$. Then the posterior distribution of $W$ is a normal distribution with mean 
+$$
+\mu'=\frac{\tau \mu + n r \bar{X}}{\tau + n r}
+$$
+ and precision $\tau + nr$
+```{r}
+n2<-50
+x2<-rnorm(n2, mean = 4, sd=0.75)
+norm_conju<-function(vec, mean, precision, r){
+  len=length(vec)
+  new_mean=(precision*mean+ len*r*mean(vec))/(precision+n*r)
+  new_precision=precision+n*r
+  x<-x <- seq(-10, 10, length=10000)
+ plot(x, dnorm(x, mean=new_mean, sd=sqrt(1/new_precision)))
+}
+norm_conju(x2, -11, 2, r=1/0.75^2) 
+```
+ 
+# For exponential likelihood function 
+If the $X_1, X_2, ..., X_n$ is a random sample from a exponential distribution with an unknown value of the parameter $W$ . Supoose the prior for $W$ is a gamma distriution with parameters $\alpha$(shape) and $\beta$(rate) . Then the posterior distribution of $W$ is a gamma distribution with parameters $\alpha + n$ and $\beta + \sum_{i=1}^n X_i$
+```{r}
+n3<-50
+x3<-rexp(n3, rate=3)
+exp_conju<-function(vec, alpha, beta){
+len=length(vec)
+new_alpha=alpha+len
+new_beta=beta+sum(vec)
+x<-x <- seq(-10, 10, length=10000)
+plot(x, dgamma(x, shape=new_alpha, rate = new_beta ))
+}
+exp_conju(x3, alpha= 0.76, beta=0.2)
+```
+
+# For Uniform(0, W) likelihood function 
+If the $X_1, X_2, ..., X_n$ is a random sample from a Uniform(0, W) distribution with an unknown value of the parameter $W$. Supoose $W$ follows a Pareto distribution with parameters $\omega_0$ and $\alpha$ . Then the posterior distribution is a Pareto distribution with parameters $\omega'_0= max{\omega_0, x_1, ..., x_n}$ and $\alpha +n$
+```{r}
+n4<-50
+x4<-runif(n3)
+pareto<-function(x, eta, theta){
+  return ( (theta*eta^(theta))/x^(theta+1) )
+}
+unif_conju<-function(vec, omega0, alpha){
+  len=length(vec)
+  omega1<-max(c(omega0, vec))
+  new_alpha=alpha+len
+  x<-x <- seq(0, 10, length=10000)
+  plot(x, log10(pareto(x, omega1, new_alpha) ) )
+}
+unif_conju(x4, 1, -49.5)
+
+```
+
+
+
