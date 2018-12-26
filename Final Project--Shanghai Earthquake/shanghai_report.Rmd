@@ -7,10 +7,6 @@ output:
 ---
 
 
-<p style="text-align: center;">Jiapeng Zhang NetID: jz704</p>
-
-<p style="text-align: center;">Lemin Wu NetID: lw514</p>
-
 
 In this project, we are given earthquake data in area near Shanghai from 1977 to 2008. Different column means different data for different kinds of earthqaukes. Each magnitude is the average magitude within that two-week period.
 
