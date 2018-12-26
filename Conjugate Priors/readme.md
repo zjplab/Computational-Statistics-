@@ -1,1 +1,1 @@
-- [Report]()
+- [Report](https://github.com/zjplab/Computational-Statistics-/blob/master/Conjugate%20Priors/conjugate_prior.pdf)
