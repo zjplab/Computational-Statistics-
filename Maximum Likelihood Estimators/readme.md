@@ -1,1 +1,2 @@
-
+- [Original Report]()
+- [Fixed Report](https://github.com/zjplab/Computational-Statistics-/blob/master/Maximum%20Likelihood%20Estimators/MLE_new.pdf)
