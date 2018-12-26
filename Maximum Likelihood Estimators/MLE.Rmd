@@ -1,0 +1,360 @@
+---
+title: "Maximum Likehood Estimator"
+output:
+  pdf_document: default
+  html_notebook: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+# Introduction
+
+maximum likelihood estimation is one common method for estimating paremater in a parametric model, just like method of moments. We assume$X_1, X_2..., X_n$ be IID with *PDF* $f(x;\theta)$, define the likelihood function as 
+$$
+\mathcal{L}(\theta)=\Pi_{i=1}^nf(X_i;\theta)
+$$
+And the log likelihood function is defined by $\mathcal{l}_n(\theta)=log \mathcal{L}_n(\theta)=\sum_{i=1}^n log f(X_i; \theta)$. 
+
+
+The *maximum likelihood estimator* MLE, denoted by $\hat{\theta}_n$, is the value of $\theta$ that maximizes $\mathcal{L}_n(\theta)$
+
+
+
+
+# Derivation 
+
+
+### Point mass at $a$
+Notice the probability mass function for point mass distribution is $f(x)=1$ in $x=a$ and 0 elsewhere. In fact, $f$ have only two values:1 and 0, so does the $\mathcal{L}(\theta)$ which is the product of many $f$s. We choose the MLE for point mass distribution to be mode among $X_n$. 
+
+### Bernoulli
+The probability function is $f(x;p)=p^x(1-p)^{1-x}$ for $x=0,1$ , the unknown parameter is $p$.
+$$
+\mathcal{L}_n(p)=\prod_{i=1}^nf(X_i; p)=\prod_{i=1}^n p^{X_i}(1-p)^{1-X_i}=p^S(1-p)^{n-S}
+$$
+where $S=\sum_i X_i$. Hence,
+$$
+\mathcal{l}_n(p)=S log p+ (n-S)log(1-p)
+$$
+Take the derivation and set it equal to 0 gave us $\hat{p}_n=\frac{S}{n}$
+
+### Binomial(N,p)
+$$
+\mathcal{L}(p) = \prod_i^n(f(y_i)) =  \prod_i^n \left[ {{N}\choose{y_i}}p^{y_i} (1-p)^{N- yi} \right] = \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}} \,.$$
+
+
+$$\hat{p} = \arg\max_p \left[ \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}}\right]$$
+
+$$
+\begin{array}{rcl} \hat{p} & = & \displaystyle\arg\max_p\ \  \ln\left[ \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}}\right] \\ & = & \displaystyle \arg\limits\max_p  \sum_{i=1}^n\left[ \ln {{N}\choose{y_i}} + \left( \sum_{i=1}^n y_i \right)\ln(p) + \left( nN - \sum_{i=1}^n y_i \right)\ln(1-p) \right] \end{array}
+$$
+
+$$
+0 + \frac{\left( \sum_{i=1}^n y_i \right)}{\hat{p}} - \frac{\left(n N - \sum_{i=1}^n y_i \right)}{1-\hat{p}} = 0 \,.
+$$
+$$\hat{p} = \frac{\sum_{i=1}^n y_i}{nN} = \frac{\bar{y}}{N} $$
+
+### Geometric(p)
+$P(X=k)=p(1-p)^k$ where $k\ge1$
+$$
+\mathcal{L}\left(p \right)={\left(1-p \right)}^{{x}_{1}-1}p {\left(1-p \right)}^{{x}_{2}-1}p...{\left(1-p \right)}^{{x}_{n}-1}p ={p}^{n}{\left(1-p \right)}^{\sum_{1}^{n}{x}_{i}-n}
+$$
+$$ln\mathcal{L}(p)=\sum_{i=1}^{n}{x}_{i}ln(p)+\left(n-\sum_{i=1}^{n}{x}_{i} \right)ln\left(1-p \right)$$
+
+$$
+\frac{dln\mathcal{L}(p)}{dp}=\frac{1}{p}\sum_{i=1}^{n}{x}_{i}+\frac{1}{1-p}\left(n-\sum_{i=1}^{n}{x}_{i} \right)=0
+$$
+$$\hat{p}=\frac{n}{\left(\sum_{1}^{n}{x}_{i} \right)}$$
+
+### Poisson Distribution($\lambda$)
+$$
+\mathcal{L}(\lambda)=\prod_{i=1}^{n}\frac{{\lambda}^{{x}_{i}}{e}^{-\lambda}}{{x}_{i}!} = {e}^{-n\lambda} \frac{{\lambda}^{\sum_{1}^{n}{x}_{i}}}{\prod_{i=1}^{n}{x}_{i}!}
+$$
+$$
+lnL(\lambda)=-n\lambda+\sum_{1}^{n}{x}_{i}ln(\lambda)-ln\left(\prod_{i=1}^{n}{x}_{i}!\right)
+$$
+$$\frac{dlnL(\lambda)}{dp}=-n+   \sum_{1}^{n} \frac{ x_i } {\lambda} $$
+
+$$\hat{\lambda}=\frac{\sum_{i=1}^{n}{x}_{i}}{n}$$
+
+### Uniform(a,b)
+$$
+\mathcal{L}_n(a, b)=\frac{1}{(b-a)^n}
+$$
+if all $a \le X_1, X_2, ..., X_n \le b$ 
+else $\mathcal{L}=0$
+To maximize, we need to minize $b-a$, the boundary condition is to choose $\hat{a}=min_i(X_i)$ and $\hat{b}=max_i(X_i)$
+
+### Normal($\mu$, $\sigma^2$)
+$$
+\mathcal{L}_n(\mu, \sigma) =\prod_i \frac{1}{\sigma} exp\{- \frac{1}{2 \sigma^2} (X_i-\mu)^2 \} \\
+                          =\sigma^{-n}exp\{ -\frac{1}{2\sigma^2}\sum_i(X_i-\mu)^2 \}\\
+                          =\sigma^{-n}exp\{ -\frac{nS^2}{2\sigma^2}\} exp\{- \frac{n(\bar{X} -\mu)^2}{2\sigma^2} \}
+$$
+where $\bar{X}=n^{-1}\sum_i X_i$, $S^2=n^{-1}\sum_i (X_i - \bar{X})^2$ 
+
+$$
+\mathcal{l}(\mu, \sigma)=-n log\sigma - \frac{nS^2}{2\sigma^2}- \frac{n(\bar{X}-\mu )^2}{2\sigma^2}
+$$
+Solving eqations $\frac{ \partial \mathcal{l}(\mu, \sigma) }{\partial \mu} =0$ and 
+$\frac{ \partial \mathcal{l}(\mu, \sigma)} {\partial \mathcal{l} \sigma}$
+we conclude that $\hat{\mu}=\bar{X}$ and $\hat{\sigma}=S$
+
+### Exponential($\beta$)
+$$
+\mathcal{L}(\beta)=\mathcal{L}\left(\beta;{X}_{1},{X}_{2}...{X}_{n} \right)=\left(\frac{1}{\beta}{e}^{\frac{{-X}_{1}}{\beta}}\right)\left(\frac{1}{\theta}{e}^{\frac{{-X}_{2}}{\beta}}\right)...\left(\frac{1}{\theta}{e}^{\frac{{-X}_{n}}{\beta}} \right)=\frac{1}{{\beta}^{n}}exp\left(\frac{-\sum_{1}^{n}{X}_{i}}{\beta} \right)
+$$
+$$
+ln \mathcal{L}\left(\beta\right)=-n ln\left(\beta\right) -\frac{1}{\beta}\sum_{1}^{n}{X}_{i}, 0<\beta<\infty$$
+$$
+\frac{d\left[ln \mathcal{L}\left(\theta\right) \right]}{d\beta}=\frac{-n }{\beta} +\frac{1}{{\beta}^{2}}\sum_{1}^{n}{X}_{i}=0
+$$
+
+$$
+\hat{\beta}=\frac{\sum_{1}^{n}{X}_{i}}{n}
+$$
+
+### Gamma($\alpha, \beta$)
+$$
+\mathcal{L}(\alpha, \beta)=(\frac{1}{\beta^\alpha \Gamma(\alpha)})^n exp^{-\frac{\sum_iX_i}{\beta}} \prod_{i=1}^n X_i^{\alpha-1}
+$$
+
+
+
+$$
+\mathcal{l}_n(\alpha, \beta)=
+-n \alpha log \beta -n log\Gamma(\alpha) -\frac{\sum_i X_i}{\beta}
++\sum_{i=1}^n (\alpha -1) log X_i
+$$
+Solve $\frac{\partial \mathcal{l}_n(\alpha, \beta)}{\partial \beta}=0$ and $\frac{\partial l_n(\alpha, \beta)}{ \partial \alpha}=0$  yield:
+$$
+\hat{\beta}=\frac{\sum_i X_i}{n\alpha}
+$$
+
+and $$
+\sum_{i=1}^n log X_i = n og \frac{\sum X_i}{n \alpha} + n \psi(\alpha) 
+$$
+
+where $$\psi(\alpha)=\frac{d log \Gamma(\alpha) }{d \alpha}$$, is called Digamma Function
+However, no closed form exists for $\hat{\alpha}$, only numerical solution exist. 
+
+we calculate the numerical estimation using Newton-Raphson [Refernce](http://bioops.info/2015/01/gamma-mme-mle/)
+$$
+l_n'(\alpha)=n log(\frac{\alpha}{\bar{X}})-n\frac{\Gamma'(\alpha)}{\Gamma(\alpha)}+\sum_{i=1}^nlog X_i
+$$
+$$
+l_n''(\alpha)=\frac{n}{\alpha}-n(\frac{\Gamma'(\alpha)}{\Gamma(\alpha)})'
+$$
+$$
+\hat{\alpha}^{(k)}=\hat{\alpha}^{(k-1)}- \frac{l_n'(\hat{\alpha} ^{(k-1)})} {l_n''(\hat{\alpha} ^{(k-1)})}
+\\
+\hat{\beta}=\frac{\bar{X}}{\hat{\alpha}}
+$$
+### Beta($\alpha, \beta$)
+$$
+\mathcal{L}_n(\alpha, \beta)=(\frac{\Gamma(\alpha +\beta)}{\Gamma(\alpha)\Gamma(\beta)})^n \prod_{i=1}^n(X_i)^{\alpha-1}
+\prod_{i=1}^n(1-X_i)^{\beta-1}
+$$
+$$
+\mathcal{l}_n(\alpha, \beta)=nlog( \Gamma (\alpha +\beta) ) -n log( \Gamma(\beta)) +(\alpha-1)\sum_{i=1}^n log(X_i)+(\beta-1) \sum_{i=1}^n log(1-X_i)
+$$
+solve $\frac{\partial \mathcal{l}_n(\alpha, \beta)}{ \partial \alpha}$ and 
+$\frac{ \partial \mathcal{l}_n(\alpha, \beta)}{\partial \beta}$
+ yield no analytical solution. 
+ However, numerical solution via Newton-Raphson mehod does exist.  [For reference, check page 27 on this paper](https://scholarsarchive.byu.edu/cgi/viewcontent.cgi?article=2613&context=etd)
+
+We set $\hat{\theta}=(\hat{\alpha}, \hat{ \beta})$ iteratively:
+$$
+\hat{\theta}_{i+1}=\hat{\theta}_{i}- G^{-1}g\\
+g=[g1,g2]\\
+g1=\psi(\hat{\alpha})-\psi(\hat{\alpha}+\hat{\beta})-\frac{1}{n}\sum_{i=1}^n log(X_i)\\
+g2=\psi(\hat{\beta})-\psi(\hat{\alpha}+\hat{\beta})-\frac{1}{n}\sum_{i=1}^n log(1-X_i)\\
+G=\begin{bmatrix}
+\frac{dg1}{d\alpha} & \frac{dg2}{d\beta} \\
+\frac{dg2}{d\alpha} & \frac{dg2}{d\beta}
+
+\end{bmatrix}\\
+\frac{dg1}{d\alpha}=\psi'(\alpha) - \psi'(\alpha +\beta) \\
+\frac{dg1}{d\beta}=\frac{dg2}{d\beta}=-\psi'(\alpha + \beta)\\
+\frac{dg2}{d\beta}=\psi'(\beta)-\psi'(\alpha+\beta)
+$$
+ 
+### Student t distribution
+$$
+\mathcal{L}_n(v)=(\frac{\Gamma( \frac{\nu+1}{2} )}{\Gamma{\frac{ \nu}{ 2}} })^n \frac{1}
+{
+\prod_{i=1}^n(1+\frac{X_i^2}{\nu})^{ \frac{\nu+1} {2} }
+} 
+$$
+$$
+l_n(\nu)=n log(\Gamma(\frac{\nu+1}{2}))-n log( \Gamma( \frac{\nu}{2} ) )-\sum_{i=1}^n \frac{\nu+1}{2}log(1+ \frac{X_i^2}{\nu} )
+$$
+$$\frac{\partial l_n(\nu)}{\partial\nu}= \frac{\nu+1}{2}\sum_{i=1}^n \frac{X_i^2}{\nu^2}-\frac{1}{2}\sum_{i=1}^n(\frac{X_i^2}{\nu}+1)+\frac{n \psi( \frac{\nu+1}{2})}{2}- \frac{n \psi(\frac{\nu}{2})}{2}=0
+$$
+We cannot get closed-form solution. 
+
+### $\mathcal{\chi}_p^2$ Chi-Squared Distriubtion
+$$
+\mathcal{L}_n(p)=\frac{1}{(\Gamma(p/2) 2^{p/2})^n}e^{\frac{-\sum_{i=1}^nX_i}{2}} \prod_{i=1}^n X_i^{p/2-1}
+$$
+
+$$
+l_n(p)=-n log(\Gamma(p/2))- \frac{pn}{2} log2-\sum_{i=1}^n\frac{X_i}{2}+(\frac{p}{2}-1)\sum_{i=1}^n log X_i
+$$
+
+$$
+\frac{\partial l_n(p)}{\partial p}=
+- \frac{n}{2}\psi(p/2)-\frac{n}{2} log2+\frac{1}{2}\sum_{i=1}^n log X_i=0
+$$
+
+$$
+\hat{p}=2 \psi^{-1}(\frac{\sum_{i=1}^n log X_i}{n} - log 2)
+$$
+But [in fact](http://mathworld.wolfram.com/DigammaFunction.html), digamma function is not monotone. Therefore it doesn't have an inverse function at all. So the formula above is not right! In other words, the student t distributions doesn't have a closed-form expression for MLE. 
+
+# Program
+```{r}
+MLE_Beta<-function(x, iteration=100){
+  mu=mean(x)
+  s2<-var(x)
+  theta<-c(mu*(-1+ mu*(1-mu)/s2),
+    (1-mu)*(-1+ mu*(1-mu)/s2)
+  )
+  G<-matrix(0, ncol=2, nrow=2)
+  g<-matrix(0, nrow=2, ncol=1)
+  for(i in 1:iteration){
+    g[1,1]=digamma(theta[1])-digamma(theta[1] + theta[2])-sum(log(x))/length(x)
+    g[2,1]=digamma(theta[2])-digamma(theta[1] + theta[2])-sum(log(1-x))/length(x)
+    G[1,1]=trigamma(theta[1])-trigamma(theta[1]+theta[2])
+    G[1,2]=-trigamma(theta[1]+theta[2])
+    G[2,1]=-trigamma(theta[1]+theta[2])
+    G[2,2]=trigamma(theta[2])-trigamma(theta[1]+theta[2])
+    theta<-theta-solve(G) %*% g 
+  }
+  return( list(shape1=theta[1], shape2=theta[2] ) )
+}
+
+MLE_Gamma<-function(x, iteratin=100){
+  n<-length(x)
+  mean_x<-mean(x)
+  alpha<-n*(mean_x^2)/sum((x-mean_x)^2)
+  beta<-sum((x-mean_x)^2)/n/mean_x
+  for(i in 1:iteratin){
+    #first derivative of alpha_k-1
+    der1<-n*log(alpha/mean_x)-n*digamma(alpha)+sum(log(x))
+    #second derivative of alpha_k-1
+    der2<-n/alpha-n*trigamma(alpha)
+    #calculate next alpha
+    alpha<-alpha-der1/der2
+    beta<-mean_x/alpha
+  }
+
+  return(list(shape=alpha, scale=beta))
+}
+
+MLE<-function(x, type, bino=5){
+  if(type=="PointMass") { ux <- unique(x) ; return(  ux[which.max(tabulate(match(x, ux)))]) }
+  if (type=="Bernoulli") return(  list(size=1, prob=sum(x)/length(x)) )
+  if(type=="Binomial") return(  list(size=bino, prob=mean(x)/bino) )
+  if(type=="Geometric") return( list(prob=length(x)/mean(x) ))
+  if(type=="Poisson") return( list( lambda=mean(x) ) )
+  if(type=="Uniform") return( list(min=min(x), max=max(x) ) )
+  if(type=="Normal" ) return( list(mean=mean(x), sd=sqrt(  sum( (x-mean(x) )^2)/ length(x)  )))
+  if(type=="Exponential") return( list(rate=mean(x) ) )
+  if(type=="Gamma") return(MLE_Gamma(x))
+  if(type=="Beta") return(MLE_Beta(x))
+  #if(type=="t") return(2*(a1^2+a2)/(a1^2+a2-1))
+  #if(type=="chi") return(2* )
+}
+```
+
+# Test
+We combine parametric bootstrapping and KS-test to test the goodness of fit. 
+
+### Parametric Bootstrapping
+In parametric bootstrapping, we sample from our "estimated" distribution $f(x; \hat{\theta}_n)$ instead of the empirical distribution $\hat{F}_n(x)$
+
+
+### Kolmogorov-Smirnov test
+
+In statistics, the Kolmogorov-Smirnov test (K-S test or KS test) is a nonparametric test of the equality of continuous, one-dimensional probability distributions that can be used to compare a sample with a reference probability distribution (one-sample K-S test), or to compare two samples (two-sample K-S test). It is named after Andrey Kolmogorov and Nikolai Smirnov.
+
+The Kolmogorov-Smirnov statistic quantifies a distance between the empirical distribution function of the sample and the cumulative distribution function of the reference distribution, or between the empirical distribution functions of two samples. The null distribution of this statistic is calculated under the null hypothesis that the sample is drawn from the reference distribution (in the one-sample case) or that the samples are drawn from the same distribution (in the two-sample case). In each case, the distributions considered under the null hypothesis are continuous distributions but are otherwise unrestricted.
+
+The two-sample K-S test is one of the most useful and general nonparametric methods for comparing two samples, as it is sensitive to differences in both location and shape of the empirical cumulative distribution functions of the two samples.(https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test)
+
+
+
+# Bootstrap and KS-test code
+I created two *partial* functions for later use, which can create a parameters-partially-fed function. 
+```{r}
+partial <- function(f, ...) {
+  l <- list(...)
+  function(...) {
+    do.call(f, c(l, list(...)))
+  }
+}
+partial_list<-function(f, L){
+  function(...){
+    do.call(f, c(L, list(...)))
+  }
+}
+
+
+BootKS<-function(x, n0 , nboot=10000, rvecFUN, Distritype, FUN)
+{
+Dvec<-NULL
+for(i in 1:nboot){
+  vec<-rvecFUN(n=n0)
+  theta<-MLE(vec, type = Distritype)
+  Dvec<-c(Dvec, unname(ks.test(x, partial_list(FUN, theta))$statistic ))
+}
+return(Dvec)
+}
+
+KS<-function(x, nboot=10000, rvecFUN, Distritype, FUN){
+  n=length(x)
+  DVec<-NULL
+  theta0<-MLE(x, type=Distritype)
+  D0=unname( ks.test(x, partial_list(FUN, theta0))$statistic )
+   
+  for(i in 1:nboot){
+    xstar<-partial_list(rvecFUN, theta0)(n)
+    thetastar<-MLE(xstar, type = Distritype)
+    Dstar=unname(ks.test(xstar, partial_list(FUN, thetastar))$statistic )
+    DVec<-c(DVec, Dstar)
+    
+  }
+  return(list(p= sum(DVec>D0)/nboot ))
+}
+```
+
+### Test with Normal Distribution 
+
+```{r}
+set.seed(553)
+x0<-rnorm(n=100, mean=, sd=6)
+print( KS(x0, rvecFUN =rnorm, Distritype = "Normal", FUN = pnorm) )
+
+
+```
+
+### Test with Gamma Distribution 
+```{r}
+set.seed(239)
+x1<-rgamma(n=100, shape=5, scale=6)
+
+print(KS(x1, rvecFUN = rgamma, Distritype = "Gamma", FUN=pgamma))
+
+
+
+```
+
+### Test with Beta Distribution 
+```{r}
+set.seed(461)
+x2<-rbeta(n=100, shape1=45, shape2 = 13)
+print( KS(x2,rvecFUN = rbeta, Distritype = "Beta", FUN = pbeta))
+
+```
+

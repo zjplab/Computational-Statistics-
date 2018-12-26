@@ -1,0 +1,560 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Maximum Likehood Estimator},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Maximum Likehood Estimator}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+maximum likelihood estimation is one common method for estimating
+paremater in a parametric model, just like method of moments. We
+assume\(X_1, X_2..., X_n\) be IID with \emph{PDF} \(f(x;\theta)\),
+define the likelihood function as \[
+\mathcal{L}(\theta)=\Pi_{i=1}^nf(X_i;\theta)
+\] And the log likelihood function is defined by
+\(\mathcal{l}_n(\theta)=log \mathcal{L}_n(\theta)=\sum_{i=1}^n log f(X_i; \theta)\).
+
+The \emph{maximum likelihood estimator} MLE, denoted by
+\(\hat{\theta}_n\), is the value of \(\theta\) that maximizes
+\(\mathcal{L}_n(\theta)\)
+
+\hypertarget{derivation}{%
+\section{Derivation}\label{derivation}}
+
+\hypertarget{point-mass-at-a}{%
+\subsubsection{\texorpdfstring{Point mass at
+\(a\)}{Point mass at a}}\label{point-mass-at-a}}
+
+Notice the probability mass function for point mass distribution is
+\(f(x)=1\) in \(x=a\) and 0 elsewhere. In fact, \(f\) have only two
+values:1 and 0, so does the \(\mathcal{L}(\theta)\) which is the product
+of many \(f\)s. We choose the MLE for point mass distribution to be mode
+among \(X_n\).
+
+\hypertarget{bernoulli}{%
+\subsubsection{Bernoulli}\label{bernoulli}}
+
+The probability function is \(f(x;p)=p^x(1-p)^{1-x}\) for \(x=0,1\) ,
+the unknown parameter is \(p\). \[
+\mathcal{L}_n(p)=\prod_{i=1}^nf(X_i; p)=\prod_{i=1}^n p^{X_i}(1-p)^{1-X_i}=p^S(1-p)^{n-S}
+\] where \(S=\sum_i X_i\). Hence, \[
+\mathcal{l}_n(p)=S log p+ (n-S)log(1-p)
+\] Take the derivation and set it equal to 0 gave us
+\(\hat{p}_n=\frac{S}{n}\)
+
+\hypertarget{binomialnp}{%
+\subsubsection{Binomial(N,p)}\label{binomialnp}}
+
+\[
+\mathcal{L}(p) = \prod_i^n(f(y_i)) =  \prod_i^n \left[ {{N}\choose{y_i}}p^{y_i} (1-p)^{N- yi} \right] = \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}} \,.\]
+
+\[\hat{p} = \arg\max_p \left[ \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}}\right]\]
+
+\[
+\begin{array}{rcl} \hat{p} & = & \displaystyle\arg\max_p\ \  \ln\left[ \left[ \prod_i^n {{N}\choose{y_i}} \right] p^{\sum_1^n y_i} (1-p)^{nN - \sum_1^n{y_i}}\right] \\ & = & \displaystyle \arg\limits\max_p  \sum_{i=1}^n\left[ \ln {{N}\choose{y_i}} + \left( \sum_{i=1}^n y_i \right)\ln(p) + \left( nN - \sum_{i=1}^n y_i \right)\ln(1-p) \right] \end{array}
+\]
+
+\[
+0 + \frac{\left( \sum_{i=1}^n y_i \right)}{\hat{p}} - \frac{\left(n N - \sum_{i=1}^n y_i \right)}{1-\hat{p}} = 0 \,.
+\] \[\hat{p} = \frac{\sum_{i=1}^n y_i}{nN} = \frac{\bar{y}}{N} \]
+
+\hypertarget{geometricp}{%
+\subsubsection{Geometric(p)}\label{geometricp}}
+
+\(P(X=k)=p(1-p)^k\) where \(k\ge1\) \[
+\mathcal{L}\left(p \right)={\left(1-p \right)}^{{x}_{1}-1}p {\left(1-p \right)}^{{x}_{2}-1}p...{\left(1-p \right)}^{{x}_{n}-1}p ={p}^{n}{\left(1-p \right)}^{\sum_{1}^{n}{x}_{i}-n}
+\]
+\[ln\mathcal{L}(p)=\sum_{i=1}^{n}{x}_{i}ln(p)+\left(n-\sum_{i=1}^{n}{x}_{i} \right)ln\left(1-p \right)\]
+
+\[
+\frac{dln\mathcal{L}(p)}{dp}=\frac{1}{p}\sum_{i=1}^{n}{x}_{i}+\frac{1}{1-p}\left(n-\sum_{i=1}^{n}{x}_{i} \right)=0
+\] \[\hat{p}=\frac{n}{\left(\sum_{1}^{n}{x}_{i} \right)}\]
+
+\hypertarget{poisson-distributionlambda}{%
+\subsubsection{\texorpdfstring{Poisson
+Distribution(\(\lambda\))}{Poisson Distribution(\textbackslash{}lambda)}}\label{poisson-distributionlambda}}
+
+\[
+\mathcal{L}(\lambda)=\prod_{i=1}^{n}\frac{{\lambda}^{{x}_{i}}{e}^{-\lambda}}{{x}_{i}!} = {e}^{-n\lambda} \frac{{\lambda}^{\sum_{1}^{n}{x}_{i}}}{\prod_{i=1}^{n}{x}_{i}!}
+\] \[
+lnL(\lambda)=-n\lambda+\sum_{1}^{n}{x}_{i}ln(\lambda)-ln\left(\prod_{i=1}^{n}{x}_{i}!\right)
+\]
+\[\frac{dlnL(\lambda)}{dp}=-n+   \sum_{1}^{n} \frac{ x_i } {\lambda} \]
+
+\[\hat{\lambda}=\frac{\sum_{i=1}^{n}{x}_{i}}{n}\]
+
+\hypertarget{uniformab}{%
+\subsubsection{Uniform(a,b)}\label{uniformab}}
+
+\[
+\mathcal{L}_n(a, b)=\frac{1}{(b-a)^n}
+\] if all \(a \le X_1, X_2, ..., X_n \le b\) else \(\mathcal{L}=0\) To
+maximize, we need to minize \(b-a\), the boundary condition is to choose
+\(\hat{a}=min_i(X_i)\) and \(\hat{b}=max_i(X_i)\)
+
+\hypertarget{normalmu-sigma2}{%
+\subsubsection{\texorpdfstring{Normal(\(\mu\),
+\(\sigma^2\))}{Normal(\textbackslash{}mu, \textbackslash{}sigma\^{}2)}}\label{normalmu-sigma2}}
+
+\[
+\mathcal{L}_n(\mu, \sigma) =\prod_i \frac{1}{\sigma} exp\{- \frac{1}{2 \sigma^2} (X_i-\mu)^2 \} \\
+                          =\sigma^{-n}exp\{ -\frac{1}{2\sigma^2}\sum_i(X_i-\mu)^2 \}\\
+                          =\sigma^{-n}exp\{ -\frac{nS^2}{2\sigma^2}\} exp\{- \frac{n(\bar{X} -\mu)^2}{2\sigma^2} \}
+\] where \(\bar{X}=n^{-1}\sum_i X_i\),
+\(S^2=n^{-1}\sum_i (X_i - \bar{X})^2\)
+
+\[
+\mathcal{l}(\mu, \sigma)=-n log\sigma - \frac{nS^2}{2\sigma^2}- \frac{n(\bar{X}-\mu )^2}{2\sigma^2}
+\] Solving eqations
+\(\frac{ \partial \mathcal{l}(\mu, \sigma) }{\partial \mu} =0\) and
+\(\frac{ \partial \mathcal{l}(\mu, \sigma)} {\partial \mathcal{l} \sigma}\)
+we conclude that \(\hat{\mu}=\bar{X}\) and \(\hat{\sigma}=S\)
+
+\hypertarget{exponentialbeta}{%
+\subsubsection{\texorpdfstring{Exponential(\(\beta\))}{Exponential(\textbackslash{}beta)}}\label{exponentialbeta}}
+
+\[
+\mathcal{L}(\beta)=\mathcal{L}\left(\beta;{X}_{1},{X}_{2}...{X}_{n} \right)=\left(\frac{1}{\beta}{e}^{\frac{{-X}_{1}}{\beta}}\right)\left(\frac{1}{\theta}{e}^{\frac{{-X}_{2}}{\beta}}\right)...\left(\frac{1}{\theta}{e}^{\frac{{-X}_{n}}{\beta}} \right)=\frac{1}{{\beta}^{n}}exp\left(\frac{-\sum_{1}^{n}{X}_{i}}{\beta} \right)
+\] \[
+ln \mathcal{L}\left(\beta\right)=-n ln\left(\beta\right) -\frac{1}{\beta}\sum_{1}^{n}{X}_{i}, 0<\beta<\infty\]
+\[
+\frac{d\left[ln \mathcal{L}\left(\theta\right) \right]}{d\beta}=\frac{-n }{\beta} +\frac{1}{{\beta}^{2}}\sum_{1}^{n}{X}_{i}=0
+\]
+
+\[
+\hat{\beta}=\frac{\sum_{1}^{n}{X}_{i}}{n}
+\]
+
+\hypertarget{gammaalpha-beta}{%
+\subsubsection{\texorpdfstring{Gamma(\(\alpha, \beta\))}{Gamma(\textbackslash{}alpha, \textbackslash{}beta)}}\label{gammaalpha-beta}}
+
+\[
+\mathcal{L}(\alpha, \beta)=(\frac{1}{\beta^\alpha \Gamma(\alpha)})^n exp^{-\frac{\sum_iX_i}{\beta}} \prod_{i=1}^n X_i^{\alpha-1}
+\]
+
+\[
+\mathcal{l}_n(\alpha, \beta)=
+-n \alpha log \beta -n log\Gamma(\alpha) -\frac{\sum_i X_i}{\beta}
++\sum_{i=1}^n (\alpha -1) log X_i
+\] Solve
+\(\frac{\partial \mathcal{l}_n(\alpha, \beta)}{\partial \beta}=0\) and
+\(\frac{\partial l_n(\alpha, \beta)}{ \partial \alpha}=0\) yield: \[
+\hat{\beta}=\frac{\sum_i X_i}{n\alpha}
+\]
+
+and \[
+\sum_{i=1}^n log X_i = n og \frac{\sum X_i}{n \alpha} + n \psi(\alpha) 
+\]
+
+where \[\psi(\alpha)=\frac{d log \Gamma(\alpha) }{d \alpha}\], is called
+Digamma Function However, no closed form exists for \(\hat{\alpha}\),
+only numerical solution exist.
+
+we calculate the numerical estimation using Newton-Raphson
+\href{http://bioops.info/2015/01/gamma-mme-mle/}{Refernce} \[
+l_n'(\alpha)=n log(\frac{\alpha}{\bar{X}})-n\frac{\Gamma'(\alpha)}{\Gamma(\alpha)}+\sum_{i=1}^nlog X_i
+\] \[
+l_n''(\alpha)=\frac{n}{\alpha}-n(\frac{\Gamma'(\alpha)}{\Gamma(\alpha)})'
+\] \[
+\hat{\alpha}^{(k)}=\hat{\alpha}^{(k-1)}- \frac{l_n'(\hat{\alpha} ^{(k-1)})} {l_n''(\hat{\alpha} ^{(k-1)})}
+\\
+\hat{\beta}=\frac{\bar{X}}{\hat{\alpha}}
+\] \#\#\# Beta(\(\alpha, \beta\)) \[
+\mathcal{L}_n(\alpha, \beta)=(\frac{\Gamma(\alpha +\beta)}{\Gamma(\alpha)\Gamma(\beta)})^n \prod_{i=1}^n(X_i)^{\alpha-1}
+\prod_{i=1}^n(1-X_i)^{\beta-1}
+\] \[
+\mathcal{l}_n(\alpha, \beta)=nlog( \Gamma (\alpha +\beta) ) -n log( \Gamma(\beta)) +(\alpha-1)\sum_{i=1}^n log(X_i)+(\beta-1) \sum_{i=1}^n log(1-X_i)
+\] solve
+\(\frac{\partial \mathcal{l}_n(\alpha, \beta)}{ \partial \alpha}\) and
+\(\frac{ \partial \mathcal{l}_n(\alpha, \beta)}{\partial \beta}\) yield
+no analytical solution. However, numerical solution via Newton-Raphson
+mehod does exist.
+\href{https://scholarsarchive.byu.edu/cgi/viewcontent.cgi?article=2613\&context=etd}{For
+reference, check page 27 on this paper}
+
+We set \(\hat{\theta}=(\hat{\alpha}, \hat{ \beta})\) iteratively: \$\$
+\hat{\theta}\emph{\{i+1\}=\hat{\theta}}\{i\}-
+G\textsuperscript{\{-1\}g\textbackslash{} g={[}g1,g2{]}\textbackslash{}
+g1=\psi(\hat{\alpha})-\psi(\hat{\alpha}+\hat{\beta})-\frac{1}{n}\sum\emph{\{i=1\}\^{}n
+log(X\_i)\textbackslash{}
+g2=\psi(\hat{\beta})-\psi(\hat{\alpha}+\hat{\beta})-\frac{1}{n}\sum}\{i=1\}}n
+log(1-X\_i)\textbackslash{} G=
+
+\begin{bmatrix}
+\frac{dg1}{d\alpha} & \frac{dg2}{d\beta} \\
+\frac{dg2}{d\alpha} & \frac{dg2}{d\beta}
+
+\end{bmatrix}
+
+\textbackslash{} \frac{dg1}{d\alpha}=\psi`(\alpha) -
+\psi'(\alpha +\beta) \textbackslash{}
+\frac{dg1}{d\beta}=\frac{dg2}{d\beta}=-\psi`(\alpha +
+\beta)\textbackslash{}
+\frac{dg2}{d\beta}=\psi'(\beta)-\psi'(\alpha+\beta) \$\$
+
+\hypertarget{student-t-distribution}{%
+\subsubsection{Student t distribution}\label{student-t-distribution}}
+
+\[
+\mathcal{L}_n(v)=(\frac{\Gamma( \frac{\nu+1}{2} )}{\Gamma{\frac{ \nu}{ 2}} })^n \frac{1}
+{
+\prod_{i=1}^n(1+\frac{X_i^2}{\nu})^{ \frac{\nu+1} {2} }
+} 
+\] \[
+l_n(\nu)=n log(\Gamma(\frac{\nu+1}{2}))-n log( \Gamma( \frac{\nu}{2} ) )-\sum_{i=1}^n \frac{\nu+1}{2}log(1+ \frac{X_i^2}{\nu} )
+\]
+\[\frac{\partial l_n(\nu)}{\partial\nu}= \frac{\nu+1}{2}\sum_{i=1}^n \frac{X_i^2}{\nu^2}-\frac{1}{2}\sum_{i=1}^n(\frac{X_i^2}{\nu}+1)+\frac{n \psi( \frac{\nu+1}{2})}{2}- \frac{n \psi(\frac{\nu}{2})}{2}=0
+\] We cannot get closed-form solution.
+
+\hypertarget{mathcalchi_p2-chi-squared-distriubtion}{%
+\subsubsection{\texorpdfstring{\(\mathcal{\chi}_p^2\) Chi-Squared
+Distriubtion}{\textbackslash{}mathcal\{\textbackslash{}chi\}\_p\^{}2 Chi-Squared Distriubtion}}\label{mathcalchi_p2-chi-squared-distriubtion}}
+
+\[
+\mathcal{L}_n(p)=\frac{1}{(\Gamma(p/2) 2^{p/2})^n}e^{\frac{-\sum_{i=1}^nX_i}{2}} \prod_{i=1}^n X_i^{p/2-1}
+\]
+
+\[
+l_n(p)=-n log(\Gamma(p/2))- \frac{pn}{2} log2-\sum_{i=1}^n\frac{X_i}{2}+(\frac{p}{2}-1)\sum_{i=1}^n log X_i
+\]
+
+\[
+\frac{\partial l_n(p)}{\partial p}=
+- \frac{n}{2}\psi(p/2)-\frac{n}{2} log2+\frac{1}{2}\sum_{i=1}^n log X_i=0
+\]
+
+\[
+\hat{p}=2 \psi^{-1}(\frac{\sum_{i=1}^n log X_i}{n} - log 2)
+\] But \href{http://mathworld.wolfram.com/DigammaFunction.html}{in
+fact}, digamma function is not monotone. Therefore it doesn't have an
+inverse function at all. So the formula above is not right! In other
+words, the student t distributions doesn't have a closed-form expression
+for MLE.
+
+\hypertarget{program}{%
+\section{Program}\label{program}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MLE_Beta<-}\ControlFlowTok{function}\NormalTok{(x, }\DataTypeTok{iteration=}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{  mu=}\KeywordTok{mean}\NormalTok{(x)}
+\NormalTok{  s2<-}\KeywordTok{var}\NormalTok{(x)}
+\NormalTok{  theta<-}\KeywordTok{c}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\OperatorTok{+}\StringTok{ }\NormalTok{mu}\OperatorTok{*}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{mu)}\OperatorTok{/}\NormalTok{s2),}
+\NormalTok{    (}\DecValTok{1}\OperatorTok{-}\NormalTok{mu)}\OperatorTok{*}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\OperatorTok{+}\StringTok{ }\NormalTok{mu}\OperatorTok{*}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{mu)}\OperatorTok{/}\NormalTok{s2)}
+\NormalTok{  )}
+\NormalTok{  G<-}\KeywordTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{nrow=}\DecValTok{2}\NormalTok{)}
+\NormalTok{  g<-}\KeywordTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{nrow=}\DecValTok{2}\NormalTok{, }\DataTypeTok{ncol=}\DecValTok{1}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{iteration)\{}
+\NormalTok{    g[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]=}\KeywordTok{digamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{])}\OperatorTok{-}\KeywordTok{digamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{] }\OperatorTok{+}\StringTok{ }\NormalTok{theta[}\DecValTok{2}\NormalTok{])}\OperatorTok{-}\KeywordTok{sum}\NormalTok{(}\KeywordTok{log}\NormalTok{(x))}\OperatorTok{/}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{    g[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]=}\KeywordTok{digamma}\NormalTok{(theta[}\DecValTok{2}\NormalTok{])}\OperatorTok{-}\KeywordTok{digamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{] }\OperatorTok{+}\StringTok{ }\NormalTok{theta[}\DecValTok{2}\NormalTok{])}\OperatorTok{-}\KeywordTok{sum}\NormalTok{(}\KeywordTok{log}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{x))}\OperatorTok{/}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{    G[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]=}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{])}\OperatorTok{-}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{theta[}\DecValTok{2}\NormalTok{])}
+\NormalTok{    G[}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{]=}\OperatorTok{-}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{theta[}\DecValTok{2}\NormalTok{])}
+\NormalTok{    G[}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{]=}\OperatorTok{-}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{theta[}\DecValTok{2}\NormalTok{])}
+\NormalTok{    G[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]=}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{2}\NormalTok{])}\OperatorTok{-}\KeywordTok{trigamma}\NormalTok{(theta[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{theta[}\DecValTok{2}\NormalTok{])}
+\NormalTok{    theta<-theta}\OperatorTok{-}\KeywordTok{solve}\NormalTok{(G) }\OperatorTok{%*%}\StringTok{ }\NormalTok{g }
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{(}\DataTypeTok{shape1=}\NormalTok{theta[}\DecValTok{1}\NormalTok{], }\DataTypeTok{shape2=}\NormalTok{theta[}\DecValTok{2}\NormalTok{] ) )}
+\NormalTok{\}}
+
+\NormalTok{MLE_Gamma<-}\ControlFlowTok{function}\NormalTok{(x, }\DataTypeTok{iteratin=}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{  n<-}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{  mean_x<-}\KeywordTok{mean}\NormalTok{(x)}
+\NormalTok{  alpha<-n}\OperatorTok{*}\NormalTok{(mean_x}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{sum}\NormalTok{((x}\OperatorTok{-}\NormalTok{mean_x)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{  beta<-}\KeywordTok{sum}\NormalTok{((x}\OperatorTok{-}\NormalTok{mean_x)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{n}\OperatorTok{/}\NormalTok{mean_x}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{iteratin)\{}
+    \CommentTok{#first derivative of alpha_k-1}
+\NormalTok{    der1<-n}\OperatorTok{*}\KeywordTok{log}\NormalTok{(alpha}\OperatorTok{/}\NormalTok{mean_x)}\OperatorTok{-}\NormalTok{n}\OperatorTok{*}\KeywordTok{digamma}\NormalTok{(alpha)}\OperatorTok{+}\KeywordTok{sum}\NormalTok{(}\KeywordTok{log}\NormalTok{(x))}
+    \CommentTok{#second derivative of alpha_k-1}
+\NormalTok{    der2<-n}\OperatorTok{/}\NormalTok{alpha}\OperatorTok{-}\NormalTok{n}\OperatorTok{*}\KeywordTok{trigamma}\NormalTok{(alpha)}
+    \CommentTok{#calculate next alpha}
+\NormalTok{    alpha<-alpha}\OperatorTok{-}\NormalTok{der1}\OperatorTok{/}\NormalTok{der2}
+\NormalTok{    beta<-mean_x}\OperatorTok{/}\NormalTok{alpha}
+\NormalTok{  \}}
+
+  \KeywordTok{return}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{shape=}\NormalTok{alpha, }\DataTypeTok{scale=}\NormalTok{beta))}
+\NormalTok{\}}
+
+\NormalTok{MLE<-}\ControlFlowTok{function}\NormalTok{(x, type, }\DataTypeTok{bino=}\DecValTok{5}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"PointMass"}\NormalTok{) \{ ux <-}\StringTok{ }\KeywordTok{unique}\NormalTok{(x) ; }\KeywordTok{return}\NormalTok{(  ux[}\KeywordTok{which.max}\NormalTok{(}\KeywordTok{tabulate}\NormalTok{(}\KeywordTok{match}\NormalTok{(x, ux)))]) \}}
+  \ControlFlowTok{if}\NormalTok{ (type}\OperatorTok{==}\StringTok{"Bernoulli"}\NormalTok{) }\KeywordTok{return}\NormalTok{(  }\KeywordTok{list}\NormalTok{(}\DataTypeTok{size=}\DecValTok{1}\NormalTok{, }\DataTypeTok{prob=}\KeywordTok{sum}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{length}\NormalTok{(x)) )}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Binomial"}\NormalTok{) }\KeywordTok{return}\NormalTok{(  }\KeywordTok{list}\NormalTok{(}\DataTypeTok{size=}\NormalTok{bino, }\DataTypeTok{prob=}\KeywordTok{mean}\NormalTok{(x)}\OperatorTok{/}\NormalTok{bino) )}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Geometric"}\NormalTok{) }\KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{(}\DataTypeTok{prob=}\KeywordTok{length}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{mean}\NormalTok{(x) ))}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Poisson"}\NormalTok{) }\KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{( }\DataTypeTok{lambda=}\KeywordTok{mean}\NormalTok{(x) ) )}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Uniform"}\NormalTok{) }\KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{(}\DataTypeTok{min=}\KeywordTok{min}\NormalTok{(x), }\DataTypeTok{max=}\KeywordTok{max}\NormalTok{(x) ) )}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Normal"}\NormalTok{ ) }\KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{(}\DataTypeTok{mean=}\KeywordTok{mean}\NormalTok{(x), }\DataTypeTok{sd=}\KeywordTok{sqrt}\NormalTok{(  }\KeywordTok{sum}\NormalTok{( (x}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(x) )}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\StringTok{ }\KeywordTok{length}\NormalTok{(x)  )))}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Exponential"}\NormalTok{) }\KeywordTok{return}\NormalTok{( }\KeywordTok{list}\NormalTok{(}\DataTypeTok{rate=}\KeywordTok{mean}\NormalTok{(x) ) )}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Gamma"}\NormalTok{) }\KeywordTok{return}\NormalTok{(}\KeywordTok{MLE_Gamma}\NormalTok{(x))}
+  \ControlFlowTok{if}\NormalTok{(type}\OperatorTok{==}\StringTok{"Beta"}\NormalTok{) }\KeywordTok{return}\NormalTok{(}\KeywordTok{MLE_Beta}\NormalTok{(x))}
+  \CommentTok{#if(type=="t") return(2*(a1^2+a2)/(a1^2+a2-1))}
+  \CommentTok{#if(type=="chi") return(2* )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{test}{%
+\section{Test}\label{test}}
+
+We combine parametric bootstrapping and KS-test to test the goodness of
+fit.
+
+\hypertarget{parametric-bootstrapping}{%
+\subsubsection{Parametric
+Bootstrapping}\label{parametric-bootstrapping}}
+
+In parametric bootstrapping, we sample from our ``estimated''
+distribution \(f(x; \hat{\theta}_n)\) instead of the empirical
+distribution \(\hat{F}_n(x)\)
+
+\hypertarget{kolmogorov-smirnov-test}{%
+\subsubsection{Kolmogorov-Smirnov test}\label{kolmogorov-smirnov-test}}
+
+In statistics, the Kolmogorov-Smirnov test (K-S test or KS test) is a
+nonparametric test of the equality of continuous, one-dimensional
+probability distributions that can be used to compare a sample with a
+reference probability distribution (one-sample K-S test), or to compare
+two samples (two-sample K-S test). It is named after Andrey Kolmogorov
+and Nikolai Smirnov.
+
+The Kolmogorov-Smirnov statistic quantifies a distance between the
+empirical distribution function of the sample and the cumulative
+distribution function of the reference distribution, or between the
+empirical distribution functions of two samples. The null distribution
+of this statistic is calculated under the null hypothesis that the
+sample is drawn from the reference distribution (in the one-sample case)
+or that the samples are drawn from the same distribution (in the
+two-sample case). In each case, the distributions considered under the
+null hypothesis are continuous distributions but are otherwise
+unrestricted.
+
+The two-sample K-S test is one of the most useful and general
+nonparametric methods for comparing two samples, as it is sensitive to
+differences in both location and shape of the empirical cumulative
+distribution functions of the two
+samples.(\url{https://en.wikipedia.org/wiki/Kolmogorov\%E2\%80\%93Smirnov_test})
+
+\hypertarget{bootstrap-and-ks-test-code}{%
+\section{Bootstrap and KS-test code}\label{bootstrap-and-ks-test-code}}
+
+I created two \emph{partial} functions for later use, which can create a
+parameters-partially-fed function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{partial <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(f, ...) \{}
+\NormalTok{  l <-}\StringTok{ }\KeywordTok{list}\NormalTok{(...)}
+  \ControlFlowTok{function}\NormalTok{(...) \{}
+    \KeywordTok{do.call}\NormalTok{(f, }\KeywordTok{c}\NormalTok{(l, }\KeywordTok{list}\NormalTok{(...)))}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{partial_list<-}\ControlFlowTok{function}\NormalTok{(f, L)\{}
+  \ControlFlowTok{function}\NormalTok{(...)\{}
+    \KeywordTok{do.call}\NormalTok{(f, }\KeywordTok{c}\NormalTok{(L, }\KeywordTok{list}\NormalTok{(...)))}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+
+\NormalTok{BootKS<-}\ControlFlowTok{function}\NormalTok{(x, n0 , }\DataTypeTok{nboot=}\DecValTok{10000}\NormalTok{, rvecFUN, Distritype, FUN)}
+\NormalTok{\{}
+\NormalTok{Dvec<-}\OtherTok{NULL}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nboot)\{}
+\NormalTok{  vec<-}\KeywordTok{rvecFUN}\NormalTok{(}\DataTypeTok{n=}\NormalTok{n0)}
+\NormalTok{  theta<-}\KeywordTok{MLE}\NormalTok{(vec, }\DataTypeTok{type =}\NormalTok{ Distritype)}
+\NormalTok{  Dvec<-}\KeywordTok{c}\NormalTok{(Dvec, }\KeywordTok{unname}\NormalTok{(}\KeywordTok{ks.test}\NormalTok{(x, }\KeywordTok{partial_list}\NormalTok{(FUN, theta))}\OperatorTok{$}\NormalTok{statistic ))}
+\NormalTok{\}}
+\KeywordTok{return}\NormalTok{(Dvec)}
+\NormalTok{\}}
+
+\NormalTok{KS<-}\ControlFlowTok{function}\NormalTok{(x, }\DataTypeTok{nboot=}\DecValTok{10000}\NormalTok{, rvecFUN, Distritype, FUN)\{}
+\NormalTok{  n=}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{  DVec<-}\OtherTok{NULL}
+\NormalTok{  theta0<-}\KeywordTok{MLE}\NormalTok{(x, }\DataTypeTok{type=}\NormalTok{Distritype)}
+\NormalTok{  D0=}\KeywordTok{unname}\NormalTok{( }\KeywordTok{ks.test}\NormalTok{(x, }\KeywordTok{partial_list}\NormalTok{(FUN, theta0))}\OperatorTok{$}\NormalTok{statistic )}
+   
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nboot)\{}
+\NormalTok{    xstar<-}\KeywordTok{partial_list}\NormalTok{(rvecFUN, theta0)(n)}
+\NormalTok{    thetastar<-}\KeywordTok{MLE}\NormalTok{(xstar, }\DataTypeTok{type =}\NormalTok{ Distritype)}
+\NormalTok{    Dstar=}\KeywordTok{unname}\NormalTok{(}\KeywordTok{ks.test}\NormalTok{(xstar, }\KeywordTok{partial_list}\NormalTok{(FUN, thetastar))}\OperatorTok{$}\NormalTok{statistic )}
+\NormalTok{    DVec<-}\KeywordTok{c}\NormalTok{(DVec, Dstar)}
+    
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{p=} \KeywordTok{sum}\NormalTok{(DVec}\OperatorTok{>}\NormalTok{D0)}\OperatorTok{/}\NormalTok{nboot ))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{test-with-normal-distribution}{%
+\subsubsection{Test with Normal
+Distribution}\label{test-with-normal-distribution}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{553}\NormalTok{)}
+\NormalTok{x0<-}\KeywordTok{rnorm}\NormalTok{(}\DataTypeTok{n=}\DecValTok{100}\NormalTok{, }\DataTypeTok{mean=}\NormalTok{, }\DataTypeTok{sd=}\DecValTok{6}\NormalTok{)}
+\KeywordTok{print}\NormalTok{( }\KeywordTok{KS}\NormalTok{(x0, }\DataTypeTok{rvecFUN =}\NormalTok{rnorm, }\DataTypeTok{Distritype =} \StringTok{"Normal"}\NormalTok{, }\DataTypeTok{FUN =}\NormalTok{ pnorm) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $p
+## [1] 0.3263
+\end{verbatim}
+
+\hypertarget{test-with-gamma-distribution}{%
+\subsubsection{Test with Gamma
+Distribution}\label{test-with-gamma-distribution}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{239}\NormalTok{)}
+\NormalTok{x1<-}\KeywordTok{rgamma}\NormalTok{(}\DataTypeTok{n=}\DecValTok{100}\NormalTok{, }\DataTypeTok{shape=}\DecValTok{5}\NormalTok{, }\DataTypeTok{scale=}\DecValTok{6}\NormalTok{)}
+
+\KeywordTok{print}\NormalTok{(}\KeywordTok{KS}\NormalTok{(x1, }\DataTypeTok{rvecFUN =}\NormalTok{ rgamma, }\DataTypeTok{Distritype =} \StringTok{"Gamma"}\NormalTok{, }\DataTypeTok{FUN=}\NormalTok{pgamma))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $p
+## [1] 0.3167
+\end{verbatim}
+
+\hypertarget{test-with-beta-distribution}{%
+\subsubsection{Test with Beta
+Distribution}\label{test-with-beta-distribution}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{461}\NormalTok{)}
+\NormalTok{x2<-}\KeywordTok{rbeta}\NormalTok{(}\DataTypeTok{n=}\DecValTok{100}\NormalTok{, }\DataTypeTok{shape1=}\DecValTok{45}\NormalTok{, }\DataTypeTok{shape2 =} \DecValTok{13}\NormalTok{)}
+\KeywordTok{print}\NormalTok{( }\KeywordTok{KS}\NormalTok{(x2,}\DataTypeTok{rvecFUN =}\NormalTok{ rbeta, }\DataTypeTok{Distritype =} \StringTok{"Beta"}\NormalTok{, }\DataTypeTok{FUN =}\NormalTok{ pbeta))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $p
+## [1] 0.5161
+\end{verbatim}
+
+
+\end{document}

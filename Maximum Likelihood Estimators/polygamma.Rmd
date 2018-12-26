@@ -1,0 +1,44 @@
+# Beta
+```{r}
+MLE_Beta<-function(x, iteration=100){
+  mu=mean(x)
+  s2<-var(x)
+  theta<-c(mu*(-1+ mu*(1-mu)/s2),
+    (1-mu)*(-1+ mu*(1-mu)/s2)
+  )
+  G<-matrix(0, ncol=2, nrow=2)
+  g<-matrix(0, nrow=2, ncol=1)
+  for(i in 1:iteration){
+    g[1,1]=digamma(theta[1])-digamma(theta[1] + theta[2])-sum(log(x))/length(x)
+    g[2,1]=digamma(theta[2])-digamma(theta[1] + theta[2])-sum(log(1-x))/length(x)
+    G[1,1]=trigamma(theta[1])-trigamma(theta[1]+theta[2])
+    G[1,2]=-trigamma(theta[1]+theta[2])
+    G[2,1]=-trigamma(theta[1]+theta[2])
+    G[2,2]=trigamma(theta[2])-trigamma(theta[1]+theta[2])
+    theta<-theta-solve(G) %*% g 
+  }
+  return(theta)
+}
+```
+
+#Gamma 
+```{r}
+MLE_Gamma<-function(x, iteratin=100){
+  n<-length(x)
+  mean_x<-mean(x)
+  alpha<-n*(mean_x^2)/sum((x-mean_x)^2)
+  beta<-sum((x-mean_x)^2)/n/mean_x
+  for(i in 1:iteratin){
+    #first derivative of alpha_k-1
+    der1<-n*log(alpha/mean_x)-n*digamma(alpha)+sum(log(x))
+    #second derivative of alpha_k-1
+    der2<-n/alpha-n*trigamma(alpha)
+    #calculate next alpha
+    alpha<-alpha-der1/der2
+    beta<-mean_x/alpha
+  }
+
+  return(list(a=alpha, b=beta))
+}
+```
+
