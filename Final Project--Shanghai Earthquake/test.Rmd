@@ -1,0 +1,7 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+<p style="text-align: center;">Jiapeng Zhang NetID: jz704</p>
+<p style="text-align: center;">Lemin Wu NetID: lw514</p>
